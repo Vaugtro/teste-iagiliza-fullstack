@@ -1,0 +1,68 @@
+# Node / JavaScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Build / output
+dist/
+build/
+out/
+lib/
+coverage/
+.nyc_output/
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# TypeScript compiled files (avoid ignoring all .js unless TS-only project)
+# If your repo contains committed .js sources remove these lines
+*.js
+*.js.map
+*.d.ts
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs / runtime files
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Fastify / server runtime artifacts
+fastify.log
+*.local.log
+
+# Docker
+docker-compose.override.yml
+docker-compose.*.local.yml
+docker-compose.*.override.yml
+
+# IDEs / editors / OS
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Testing
+jest-cache/
+jest.result.json
+coverage/
+
+# Misc
+*.env.*.local
+*.swp
+*.tmp
+*.temp
+
+# Keep example env files
+!.env.example

@@ -1,0 +1,44 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with Fastify-CLI.",
+  "main": "app.js",
+  "directories": {
+    "src": "src",
+    "dist": "dist"
+  },
+  "scripts": {
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/app.ts",
+    "build": "tsc",
+    "start": "node -r tsconfig-paths/register dist/app.js",
+    "db:migrate": "pnpm prisma migrate dev",
+    "db:gen": "pnpm prisma generate",
+    "db:studio": "pnpm prisma studio"
+  },
+  "keywords": [],
+  "author": "Victor Augusto Guimarães",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/autoload": "^6.0.0",
+    "@fastify/cors": "^11.1.0",
+    "@fastify/sensible": "^6.0.0",
+    "@fastify/swagger": "^9.6.0",
+    "@fastify/swagger-ui": "^5.2.3",
+    "@prisma/client": "^6.19.0",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.0.0",
+    "fastify-cli": "^7.4.1",
+    "fastify-plugin": "^5.0.0",
+    "fastify-type-provider-zod": "^6.1.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.25.0",
+    "@types/node": "^24.10.0",
+    "prisma": "^6.19.0",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}
