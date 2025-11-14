@@ -1,124 +1,87 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-import { email } from "zod/v4/mini";
+import { updateUserSchema } from "@schemas/user";
+
+import { AuthenticatedUser } from "@plugins/auth";
+
 import { z } from "zod";
 
-import { loginSchema, registerSchema } from "schemas/user";
 
 const prisma = new PrismaClient();
 
-/** POST /register
- *
- * @body {email: string, password: string, name: string }
- *
- * @description
- * Hashes the password with bcrypt and creates both a Sender (nested create) and User,
- * returning the created user with sender (password omitted).
- *
- * @returns
- * - 201 on success,
- * - 400 for missing fields,
- * - 409 for unique constraint violations (email),
- * - 500 for other failures.
- */
-export async function register(app: FastifyInstance) {
-  app.post("/register", async (request, reply) => {
-    const parse = registerSchema.safeParse(request.body);
+export async function me(app: any) {
+  app.get(
+    "/me",
+    {
+      onRequest: [app.auth],
+    },
+    async (request: FastifyRequest) => {
+      // 'request.user' is populated by the 'auth' plugin, use it to get user data
+      const user = (request.user ?? {}) as {
+        password?: string;
+        [k: string]: any;
+      };
 
-    if (!parse.success) {
-      return reply.code(400).send({
-        error: "Invalid request body",
-        issues: z.treeifyError(parse.error),
-      });
+      // Exclude password for sensitivity and senderId to avoid redundancy
+      const { password, senderId, ...userData } = user;
+
+      return userData;
     }
+  );
 
-    const { email, password, name } = parse.data;
+  app.patch(
+    "/me",
+    {
+      onRequest: [app.auth],
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
 
-    // If validation passes, hashes password and proceeds to create user
-    const hashedPassword = await bcrypt.hash(password, 10);
+      const user = request.user as AuthenticatedUser;
 
-    try {
-      const newUser = await prisma.user.create({
-        data: {
-          email: email,
-          password: hashedPassword,
-          sender: {
-            create: {
-              name: name,
-            },
-          },
-        },
-        include: {
-          sender: true,
-        },
-      });
+      const parse = updateUserSchema.safeParse(request.body);
 
-      const { password: _, ...userData } = newUser;
-
-      reply.code(201).send(userData);
-    } catch (err: unknown) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2002"
-      ) {
-        return reply
-          .code(409)
-          .send({ error: "The email is already registered" });
+      if (!parse.success) {
+        return reply.code(400).send({
+          error: "Invalid request body",
+          issues: z.treeifyError(parse.error),
+        });
       }
-      app.log.error(err);
-      reply.code(500).send({ error: "Failed to create user" });
+
+      const { email, name } = parse.data;
+
+      const updates: { email?: string; name?: string } = {};
+
+      try {
+        // If 'email' was sent, update the 'user' model
+        if (email) {
+          const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: { email },
+          });
+          updates.email = updatedUser.email;
+        }
+
+        // If 'name' was sent, update the 'sender' model
+        if (name) {
+          const updatedSender = await prisma.sender.update({
+            where: { id: user.senderId },
+            data: { name },
+          });
+          updates.name = updatedSender.name;
+        }
+
+        return updates;
+      } catch (err: unknown) {
+        if (
+          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err.code === "P2002"
+        ) {
+          return reply.code(409).send({ error: "E-mail already in use." });
+        }
+        app.log.error(err);
+        reply.code(500).send({ error: "Failed to update profile." });
+      }
     }
-  });
-}
-
-/** POST /login
- * @body { email: string, password: string }
- *
- * @description
- * Finds user by email, compares password via bcrypt.
- * On success signs and returns a JWT containing { userId, senderId }.
- *
- * @returns
- * - 200 with { token: string } on success
- * - 400 for invalid request body
- * - 401 for invalid credentials
- */
-export async function login(app: FastifyInstance) {
-  app.post("/login", async (request, reply) => {
-    const parse = loginSchema.safeParse(request.body);
-
-    if (!parse.success) {
-      return reply.code(400).send({
-        error: "Invalid request body",
-        issues: z.treeifyError(parse.error),
-      });
-    }
-
-    const { email, password } = parse.data;
-
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      return reply.code(401).send({ error: "Credenciais inválidas" });
-    }
-
-    // HASH comparison
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return reply.code(401).send({ error: "Credenciais inválidas" });
-    }
-
-    const token = app.jwt.sign({
-      userId: user.id,
-      senderId: user.senderId,
-    });
-
-    reply.send({ token });
-  });
+  );
 }
