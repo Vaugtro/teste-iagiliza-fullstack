@@ -1,30 +1,30 @@
-'use strict'
 
-const path = require('node:path')
-const AutoLoad = require('@fastify/autoload')
+import Fastify from "fastify";
 
-// Pass --options via CLI arguments in command to enable these options.
-const options = {}
+import prismaPlugin from "@plugins/prisma";
+import authPlugin from "@plugins/auth";
 
-module.exports = async function (fastify, opts) {
-  // Place here your custom code!
+import { login, register } from "@routes/auth";
+import { me } from "@routes/user";
 
-  // Do not touch the following lines
+const app = Fastify({ logger: true });
 
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'plugins'),
-    options: Object.assign({}, opts)
-  })
+app.register(prismaPlugin);
+app.register(authPlugin);
 
-  // This loads all plugins defined in routes
-  // define your routes in one of these
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'routes'),
-    options: Object.assign({}, opts)
-  })
-}
+app.register(register, { prefix: "/user" });
+app.register(login, { prefix: "/user" });
+app.register(me, { prefix: "/" });
 
-module.exports.options = options
+
+const start = async () => {
+  try {
+    await app.listen({ port: 3000 });
+    app.log.info(`Server running at http://localhost:3000`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
