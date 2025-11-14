@@ -6,6 +6,8 @@ import { user, sender } from '@prisma/client'; // Import your Prisma types
 // --- Type Definitions ---
 export interface JWTPayload {
   userId: number;
+  email: string;
+  name: string;
 }
 
 export type AuthenticatedUser = user & { sender: sender | null };
@@ -79,5 +81,5 @@ const authPlugin: FastifyPluginAsync = async (fastify, options) => {
 
 export default fp(authPlugin, {
   name: 'auth',
-  dependencies: ['@fastify/prisma'] 
+  dependencies: ['prisma'] 
 });
