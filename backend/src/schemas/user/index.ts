@@ -11,4 +11,9 @@ const loginSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export { registerSchema, loginSchema };
+const updateUserSchema = z.object({
+  email: z.email({ message: "Invalid email format" }).optional(),
+  name: z.string().min(1, { message: "Name cannot be empty" }).optional(),
+});
+
+export { registerSchema, loginSchema, updateUserSchema };
