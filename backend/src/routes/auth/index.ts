@@ -11,6 +11,8 @@ const prisma = new PrismaClient();
 
 /** POST /register
  *
+ * @param app FastifyInstance
+ * 
  * @body {email: string, password: string, name: string }
  *
  * @description

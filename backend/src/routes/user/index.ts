@@ -10,6 +10,38 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
+/**
+ * 
+ * /me
+ * 
+ * @param app FastifyInstance
+ * 
+ * @get /me
+ * 
+ * @description
+ * Returns the authenticated user's profile (excluding password and senderId).
+ * Requires authentication via the 'auth' plugin.
+ * 
+ * @returns
+ * - 200 with user profile on success,
+ * - 401 if not authenticated.
+ * 
+ * @patch /me
+ * 
+ * @body { email?: string, name?: string }
+ * 
+ * @description
+ * Updates the authenticated user's email and/or sender name.
+ * Validates input using 'updateUserSchema'.
+ * Handles unique constraint violations for email.
+ * Requires authentication via the 'auth' plugin.
+ * 
+ * @returns
+ * - 200 with updated fields on success,
+ * - 400 for invalid input,
+ * - 409 for email already in use,
+ * - 500 for other failures.
+ */
 export async function me(app: any) {
   app.get(
     "/me",

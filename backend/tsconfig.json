@@ -17,6 +17,7 @@
       "@schemas/*": ["./src/schemas/*"]
     }
   },
+  "declaration": true,
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
