@@ -13,9 +13,11 @@
       "@routes/*": ["./src/routes/*"],
       "@plugins/*": ["./src/plugins/*"],
       "@test/*": ["./src/tests/*"],
-      "@orm/*": ["./src/orm/*"]
+      "@orm/*": ["./src/orm/*"],
+      "@schemas/*": ["./src/schemas/*"]
     }
   },
+  "declaration": true,
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

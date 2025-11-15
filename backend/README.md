@@ -1,23 +1,12 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+# Executando o Projeto
 
-## Available Scripts
+### Preencha as variáveis de ambiente conforme determinado no arquivo
+`.env.example`
 
-In the project directory, you can run:
+### Caso pretenda utilizar dockers de IA, rode o seguinte comando do `docker compose` para iniciar o projeto:
+`docker compose -f docker-compose.dev.yml --profile ${GPU_TYPE} up`
 
-### `npm run dev`
+  Onde *GPU_TYPE* é determinado pelo tipo de placa de video, que pode ser *rocm* para AMD ou *nvidia* para NVIDIA
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-### `npm start`
-
-For production mode
-
-### `npm run test`
-
-Run the test cases.
-
-## Learn More
-
-To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
+### Caso queira rodar somente o projeto sem IA, utilize o seguinte comando:
+`docker compose -f docker-compose.dev.yml --profile backend up`
