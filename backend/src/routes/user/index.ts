@@ -7,9 +7,6 @@ import { AuthenticatedUser } from "@plugins/auth";
 
 import { z } from "zod";
 
-
-const prisma = new PrismaClient();
-
 /**
  * 
  * /me
@@ -87,7 +84,7 @@ export async function me(app: any) {
       try {
         // If 'email' was sent, update the 'user' model
         if (email) {
-          const updatedUser = await prisma.user.update({
+          const updatedUser = await app.prisma.user.update({
             where: { id: user.id },
             data: { email },
           });
@@ -96,7 +93,7 @@ export async function me(app: any) {
 
         // If 'name' was sent, update the 'sender' model
         if (name) {
-          const updatedSender = await prisma.sender.update({
+          const updatedSender = await app.prisma.sender.update({
             where: { id: user.senderId },
             data: { name },
           });
