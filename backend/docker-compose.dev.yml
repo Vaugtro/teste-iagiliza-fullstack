@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: iagiliza_db
     image: postgres:${POSTGRES_VERSION:-18}
     env_file:
       - .env
@@ -14,6 +15,44 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    profiles: ["db","rocm","nvidia"]
+  ai-rocm:
+    container_name: iagiliza_ai
+    image: ollama/ollama:rocm
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      # Stability flags
+      - HSA_ENABLE_SDMA=0
+      - HIP_FORCE_DEV_MEM_ALLOC=1
+    volumes:
+      - ai_data:/root/.ollama
+      - ./setup/ollama-entrypoint.sh:/ollama-entrypoint.sh
+    ports:
+      - "11434:11434"
+    entrypoint: ["/bin/sh", "/ollama-entrypoint.sh"]
+    restart: unless-stopped
+    profiles: ["rocm"]
+  ai-nvidia:
+    container_name: iagiliza_ai
+    image: ollama/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ai_data:/root/.ollama
+      - ./setup/ollama-entrypoint.sh:/ollama-entrypoint.sh
+    ports:
+      - "11434:11434"
+    entrypoint: ["/bin/sh", "/ollama-entrypoint.sh"]
+    restart: unless-stopped
+    profiles: ["nvidia"]
 
 volumes:
   db_data:
+  ai_data:
