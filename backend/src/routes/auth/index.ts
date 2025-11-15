@@ -76,6 +76,7 @@ export async function register(app: any) {
 }
 
 /** POST /login
+ * 
  * @body { email: string, password: string }
  *
  * @description

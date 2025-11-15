@@ -7,9 +7,7 @@ import { AuthenticatedUser } from "@plugins/auth";
 
 import { z } from "zod";
 
-/**
- * 
- * /me
+/** /me
  * 
  * @param app FastifyInstance
  * 
