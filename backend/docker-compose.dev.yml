@@ -1,0 +1,81 @@
+services:
+  db:
+    container_name: iagiliza_db
+    image: postgres:${POSTGRES_VERSION:-18}
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/${POSTGRES_VERSION:-18}/docker
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_NAME" -h localhost || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    profiles: ["backend", "rocm", "nvidia"]
+  ai-rocm:
+    container_name: iagiliza_ai
+    image: ollama/ollama:rocm
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      - HSA_ENABLE_SDMA=0
+      - HIP_FORCE_DEV_MEM_ALLOC=1
+    volumes:
+      - ai_data:/root/.ollama
+      - ./setup/ollama-entrypoint.sh:/ollama-entrypoint.sh
+    ports:
+      - "11434:11434"
+    entrypoint: ["/bin/sh", "/ollama-entrypoint.sh"]
+    restart: unless-stopped
+    profiles: ["rocm"]
+  ai-nvidia:
+    container_name: iagiliza_ai
+    image: ollama/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ai_data:/root/.ollama
+      - ./setup/ollama-entrypoint.sh:/ollama-entrypoint.sh
+    ports:
+      - "11434:11434"
+    entrypoint: ["/bin/sh", "/ollama-entrypoint.sh"]
+    restart: unless-stopped
+    profiles: ["nvidia"]
+  backend:
+    container_name: iagiliza_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # Set Node.js environment to production
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-rocm:
+        condition: service_started
+        required: false
+      ai-nvidia:
+        condition: service_started
+        required: false
+    restart: unless-stopped
+    profiles: ["backend", "rocm", "nvidia"]
+volumes:
+  db_data:
+  ai_data:
