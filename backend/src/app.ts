@@ -11,6 +11,10 @@ import { message } from "@routes/message";
 
 const app = Fastify({ logger: true });
 
+app.register(require('@fastify/cors'), { 
+  origin: "http://localhost:5173"
+});
+
 app.register(require('@fastify/rate-limit'), {
   global: false,
 });
