@@ -18,8 +18,8 @@ async function main() {
 
   // NOTE: The IDs are hardcoded to ensure consistency across environments
   const toCreate = [
-    {id: 1, name: "default", modelType: "no-model", url: null},
-    {id: 2, name: "qwen", modelType: "ollama", url: `http://${domain}:11434/api/generate`},
+    {id: 1, name: "default", modelType: "no-model", url: null, senderType: "ai"},
+    {id: 2, name: "qwen", modelType: "ollama", url: `http://${domain}:11434/api/generate`, senderType: "ai"},
   ]
 
   for (const data of toCreate) {
