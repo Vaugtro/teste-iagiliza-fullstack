@@ -1,10 +1,11 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource/fira-sans/400.css';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Fira Sans',system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -60,6 +61,7 @@ a:hover {
 }
 
 body {
+  @apply bg-indigo-600;
   margin: 0;
   display: flex;
   place-items: center;
