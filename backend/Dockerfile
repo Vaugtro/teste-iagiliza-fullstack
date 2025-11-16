@@ -6,6 +6,9 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
+# Set a dummy Postgres URL for the build stage
+ENV POSTGRES_URL="postgresql://dummy:dummy@dummy:5432/dummy"
+
 # Copy package files and install ALL dependencies
 COPY package.json pnpm-lock.yaml* ./
 
@@ -39,9 +42,6 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/db/orm/schema.prisma ./src/db/orm/schema.prisma
 COPY --from=builder /app/src/db/persist/migrations ./src/db/persist/migrations
-
-# Copy the .env file
-COPY --from=builder /app/.env ./.env
 
 # Expose Fastify default port
 ENV PORT=3000

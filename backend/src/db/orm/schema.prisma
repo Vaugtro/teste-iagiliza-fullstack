@@ -59,6 +59,7 @@ model message {
   createdAt DateTime @default(now())
   
   senderId  Int
+  senderType String
   sender    sender   @relation(fields: [senderId], references: [id])
 
   chat chat @relation(fields: [chatId], references: [id])
