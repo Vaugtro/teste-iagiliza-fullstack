@@ -4,6 +4,8 @@ import Fastify from "fastify";
 import prismaPlugin from "@plugins/prisma";
 import authPlugin from "@plugins/auth";
 
+import dotenv from 'dotenv';
+
 import { login, register } from "@routes/auth";
 import { me } from "@routes/user";
 import { chat } from "@routes/chat";
@@ -12,8 +14,10 @@ import { bot } from "@routes/bot";
 
 const app = Fastify({ logger: true });
 
+dotenv.config();
+
 app.register(require('@fastify/cors'), { 
-  origin: process.env.FRONTEND_URL || '*',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 });
 
