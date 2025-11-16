@@ -5,6 +5,8 @@ import { updateUserSchema } from "@schemas/user";
 
 import { AuthenticatedUser } from "@plugins/auth";
 
+import bcrypt from "bcrypt";
+
 import { z } from "zod";
 
 /** /me
@@ -23,7 +25,7 @@ import { z } from "zod";
  * 
  * @patch /me
  * 
- * @body { email?: string, name?: string }
+ * @body { email?: string, name?: string, password?: string }
  * 
  * @description
  * Updates the authenticated user's email and/or sender name.
@@ -75,9 +77,9 @@ export async function me(app: any) {
         });
       }
 
-      const { email, name } = parse.data;
+      const { email, name, password } = parse.data;
 
-      const updates: { email?: string; name?: string } = {};
+      const updates: { email?: string; name?: string; password?: string } = {};
 
       try {
         // If 'email' was sent, update the 'user' model
@@ -96,6 +98,16 @@ export async function me(app: any) {
             data: { name },
           });
           updates.name = updatedSender.name;
+        }
+
+        // If 'password' was sent, update the 'user' model
+        if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          const updatedUser = await app.prisma.user.update({
+            where: { id: user.id },
+            data: { password: hashedPassword },
+          });
+          updates.password = updatedUser.password;
         }
 
         return updates;
