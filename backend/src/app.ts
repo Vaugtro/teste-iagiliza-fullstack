@@ -8,11 +8,13 @@ import { login, register } from "@routes/auth";
 import { me } from "@routes/user";
 import { chat } from "@routes/chat";
 import { message } from "@routes/message";
+import { bot } from "@routes/bot";
 
 const app = Fastify({ logger: true });
 
 app.register(require('@fastify/cors'), { 
-  origin: "http://localhost:5173"
+  origin: "http://localhost:5173",
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 });
 
 app.register(require('@fastify/rate-limit'), {
@@ -27,6 +29,7 @@ app.register(login, { prefix: "/user" });
 app.register(me, { prefix: "/" });
 app.register(chat, { prefix: "/" });
 app.register(message, { prefix: "/chat" });
+app.register(bot, { prefix: "/" });
 
 
 
