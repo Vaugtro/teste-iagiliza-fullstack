@@ -13,7 +13,7 @@ import { bot } from "@routes/bot";
 const app = Fastify({ logger: true });
 
 app.register(require('@fastify/cors'), { 
-  origin: "http://localhost:5173",
+  origin: process.env.FRONTEND_URL || '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 });
 
