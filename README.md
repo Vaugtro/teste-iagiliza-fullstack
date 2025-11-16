@@ -120,3 +120,12 @@ A IA pode responder com algo simples, por exemplo:
 ---
 
 ## **Boa sorte, estamos ansiosos para te receber no time IAgiliza!**
+
+## Como executar o projeto
+
+Em ambas pastas, frontend e backend, estão as instruções para executar cada parte. Cada parte é executada individualmente. Do docker-compose.yml do backend existe a possibilidade de rodar com uma imagem de IA.
+
+O projeto do front consiste em uma tela compacta que liga ambos login, register e dashboard. Na tela de dashboard é possível atualizar o usuário e enviar mensagens para uma IA de acordo com o modelo escolhido.
+Dos modelos, podem ser escolhidos entre o modelo do ollama, este que necessita do docker functional, e o no-model, que gera mensagens aleatórias.
+
+Obs.: Não cheguei a testar o docker para nvidia, pois a minha placa é AMD.
