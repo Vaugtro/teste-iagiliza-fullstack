@@ -64,7 +64,10 @@ services:
       - "3000:3000"
     environment:
       # Set Node.js environment to production
+      - POSTGRES_URL=postgresql://${POSTGRES_USER:-iagiliza}:${POSTGRES_PASSWORD:-12345678}@db:${POSTGRES_PORT:-5432}/${POSTGRES_NAME:-iagiliza}
       - NODE_ENV=production
+    env_file:
+      - .env
     depends_on:
       db:
         condition: service_healthy
