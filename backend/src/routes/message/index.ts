@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
 import { AuthenticatedUser } from "@plugins/auth";
-import { userMessageSchema, aiMessageSchema } from "schemas/message";
+import { userMessageSchema, aiMessageSchema } from "@schemas/message";
 import axios from "axios";
 
 import { z } from "zod";

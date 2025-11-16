@@ -4,7 +4,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 
 import { z } from "zod";
 
-import { loginSchema, registerSchema } from "schemas/user";
+import { loginSchema, registerSchema } from "@schemas/user";
 
 /** POST /register
  *

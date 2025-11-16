@@ -7,7 +7,7 @@ import authPlugin from "@plugins/auth";
 import { login, register } from "@routes/auth";
 import { me } from "@routes/user";
 import { chat } from "@routes/chat";
-import { message } from "routes/message";
+import { message } from "@routes/message";
 
 const app = Fastify({ logger: true });
 
@@ -28,8 +28,8 @@ app.register(message, { prefix: "/chat" });
 
 const start = async () => {
   try {
-    await app.listen({ port: 3000 });
-    app.log.info(`Server running at http://localhost:3000`);
+    await app.listen({ port: 3000, host: '0.0.0.0' });
+    app.log.info(`Server running at http://0.0.0.0:3000`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);
